@@ -33,15 +33,20 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             clean build 2>&1 | tee build_output.log
 
-      - name: Verify Compiled App Files and Executable
+      - name: Create Physical iOS .ipa Application Archive
         run: |
-          echo "--- Checking Compiled App Directory ---"
-          ls -la build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/
-          du -sh build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/
+          mkdir -p Payload
+          cp -R -L build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app Payload/
+          echo "=== PAYLOAD CONTENTS ==="
+          ls -la Payload/TPMSinoiOS.app/
+          echo "=== PAYLOAD SIZE ==="
+          du -sh Payload/TPMSinoiOS.app/
+          zip -r -9 TPMSinoiOS.ipa Payload
+          ls -lh TPMSinoiOS.ipa
 
-      - name: Upload iOS App Artifact
+      - name: Upload iOS App IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TPMSinoiOS-App
-          path: build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/**
+          name: TPMSinoiOS-IPA
+          path: TPMSinoiOS.ipa
           retention-days: 30

@@ -20,8 +20,8 @@ jobs:
 
       - name: Build iOS App with Xcode
         run: |
-          SIM_ID=$(xcrun simctl list devices available | grep -i "iPhone" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' | head -n 1)
-          echo "Selected iPhone Simulator ID: $SIM_ID"
+          SIM_ID=$(xcrun simctl list devices available | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' | head -n 1)
+          echo "Selected Available iOS Simulator ID: $SIM_ID"
           xcodebuild \
             -project TPMSinoiOS.xcodeproj \
             -scheme TPMSinoiOS \
@@ -31,20 +31,17 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build 2>&1 | tee build_output.log
 
       - name: Compress .app Bundle into app.zip with Dereferenced Links
         run: |
           cd build/Build/Products/Debug-iphonesimulator
-          echo "=== CHECKING CONTENTS OF TPMSinoiOS.app ==="
-          ls -la TPMSinoiOS.app/
-          du -sh TPMSinoiOS.app/
           cp -R -L TPMSinoiOS.app "$GITHUB_WORKSPACE/TPMSinoiOS.app"
           cd "$GITHUB_WORKSPACE"
           zip -r -9 app.zip TPMSinoiOS.app
-          echo "=== CHECKING FINAL APP.ZIP FILE SIZE ==="
+          echo "=== CHECKING FINAL APP.ZIP FILE SIZE & CONTENTS ==="
           ls -lh app.zip
-          du -sh app.zip
+          unzip -l app.zip
 
       - name: Upload app.zip Artifact for Appetize.io & Sideloadly
         uses: actions/upload-artifact@v4

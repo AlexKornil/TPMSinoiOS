@@ -38,9 +38,17 @@ jobs:
         run: |
           grep -i -C 5 "error:" build_output.log || tail -n 100 build_output.log
 
+      - name: Dereference Symlinks and Prepare Real App Bundle
+        run: |
+          mkdir -p dist
+          cp -R -L build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app dist/
+          echo "--- Real App Bundle Size & Contents ---"
+          du -sh dist/TPMSinoiOS.app
+          ls -la dist/TPMSinoiOS.app
+
       - name: Upload iOS App Artifact
         uses: actions/upload-artifact@v4
         with:
           name: TPMSinoiOS-App
-          path: build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app
+          path: dist/TPMSinoiOS.app
           retention-days: 30

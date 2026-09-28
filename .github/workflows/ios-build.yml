@@ -50,7 +50,7 @@ jobs:
           APP_PATH=$(find build -name "TPMSinoiOS.app" -type d | head -n 1)
           echo "Found app bundle at: $APP_PATH"
           mkdir -p "$GITHUB_WORKSPACE/real_app"
-          cp -R -L "$APP_PATH" "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app"
+          cp -R -L "$APP_PATH" "$GITHUB_WORKSPACE/real_app/"
           cd "$GITHUB_WORKSPACE/real_app"
           echo "=== CONTENTS OF COPIED APP BUNDLE ==="
           ls -la TPMSinoiOS.app/

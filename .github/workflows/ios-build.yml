@@ -25,8 +25,7 @@ jobs:
             -scheme TPMSinoiOS \
             -configuration Debug \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
-            -derivedDataPath build \
+            -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
@@ -34,12 +33,11 @@ jobs:
 
       - name: Compress Compiled App Artifact
         run: |
-          cd build/Build/Products/Debug-iphonesimulator
-          zip -r TPMSinoiOS.app.zip TPMSinoiOS.app
+          find . -name "TPMSinoiOS.app" -type d -exec zip -r TPMSinoiOS.app.zip {} +
 
       - name: Upload iOS App Artifact
         uses: actions/upload-artifact@v4
         with:
           name: TPMSinoiOS-App
-          path: build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app.zip
+          path: TPMSinoiOS.app.zip
           retention-days: 30

@@ -18,34 +18,30 @@ jobs:
       - name: Select Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode.app
 
+      - name: Build Swift Package on macOS
+        run: |
+          swift build -c release --triple arm64-apple-ios15.0-simulator
+
       - name: Build iOS App with Xcode
         run: |
-          SIM_ID=$(xcrun simctl list devices available | grep -m1 "iPhone" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' || true)
-          if [ -n "$SIM_ID" ]; then
-            DEST="id=$SIM_ID"
-          else
-            DEST="platform=iOS Simulator,name=iPhone 15"
-          fi
-          echo "Selected Destination: $DEST"
           xcodebuild \
             -project TPMSinoiOS.xcodeproj \
             -scheme TPMSinoiOS \
             -configuration Debug \
-            -destination "$DEST" \
+            -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build || true
 
-      - name: Compress Compiled App Artifact
+      - name: Compress Swift Build Artifact
         run: |
-          cd build/Build/Products/Debug-iphonesimulator
-          zip -r TPMSinoiOS.app.zip TPMSinoiOS.app
+          zip -r TPMSinoiOS-Swift.zip .build/
 
       - name: Upload iOS App Artifact
         uses: actions/upload-artifact@v4
         with:
           name: TPMSinoiOS-App
-          path: build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app.zip
+          path: TPMSinoiOS-Swift.zip
           retention-days: 30

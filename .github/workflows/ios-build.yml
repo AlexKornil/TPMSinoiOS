@@ -27,24 +27,37 @@ jobs:
             -scheme TPMSinoiOS \
             -configuration Debug \
             -sdk iphonesimulator \
+            -arch arm64 \
             -destination "id=$SIM_ID" \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
+            ONLY_ACTIVE_ARCH=NO \
             clean build 2>&1 | tee build_output.log
 
-      - name: Resolve Symlinks and Package app.zip for Appetize.io & Sideloadly
+      - name: Locate All Compiled Binaries & App Bundles
         run: |
-          mkdir -p "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app"
-          cp -R -L build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/ "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/"
+          echo "=== SEARCHING FOR ALL BINARIES & FILES > 100KB IN BUILD DIR ==="
+          find build -type f -size +100k -exec ls -lh {} + || true
+          echo "=== SEARCHING FOR EXECUTABLE BINARY NAMED TPMSinoiOS ==="
+          find build -name "TPMSinoiOS" -exec ls -lh {} + || true
+          echo "=== SEARCHING FOR ALL .app DIRECTORIES ==="
+          find build -name "*.app" -exec ls -ld {} + || true
+
+      - name: Compress .app Bundle into app.zip
+        run: |
+          APP_PATH=$(find build -name "TPMSinoiOS.app" -type d | head -n 1)
+          echo "Found app bundle at: $APP_PATH"
+          mkdir -p "$GITHUB_WORKSPACE/real_app"
+          cp -R -L "$APP_PATH" "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app"
           cd "$GITHUB_WORKSPACE/real_app"
-          echo "=== CHECKING REAL COPIED APP CONTENTS ==="
+          echo "=== CONTENTS OF COPIED APP BUNDLE ==="
           ls -la TPMSinoiOS.app/
           du -sh TPMSinoiOS.app/
           zip -r -9 "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
           cd "$GITHUB_WORKSPACE"
-          echo "=== CHECKING FINAL APP.ZIP FILE SIZE ==="
+          echo "=== FINAL APP.ZIP FILE SIZE ==="
           ls -lh app.zip
           du -sh app.zip
 

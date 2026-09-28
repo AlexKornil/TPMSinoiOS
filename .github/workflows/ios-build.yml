@@ -31,24 +31,16 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build 2>&1 | tee build_output.log
 
-      - name: Locate and Compress Compiled App
+      - name: Print Build Log Errors on Failure
+        if: failure()
         run: |
-          APP_PATH=$(find build -name "TPMSinoiOS.app" -type d | head -n 1)
-          echo "Found compiled app at: $APP_PATH"
-          if [ -z "$APP_PATH" ]; then
-            echo "Error: Could not locate compiled TPMSinoiOS.app directory!"
-            exit 1
-          fi
-          APP_DIR=$(dirname "$APP_PATH")
-          cd "$APP_DIR"
-          zip -r "$GITHUB_WORKSPACE/TPMSinoiOS.app.zip" TPMSinoiOS.app
-          ls -lh "$GITHUB_WORKSPACE/TPMSinoiOS.app.zip"
+          grep -i -C 5 "error:" build_output.log || tail -n 100 build_output.log
 
       - name: Upload iOS App Artifact
         uses: actions/upload-artifact@v4
         with:
           name: TPMSinoiOS-App
-          path: TPMSinoiOS.app.zip
+          path: build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app
           retention-days: 30

@@ -31,9 +31,14 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build 2>&1 | tee build_output.log
+            clean build
 
-      - name: Compress dereferenced app bundle into app.zip
+      - name: List All Files Created in Build Directory
+        run: |
+          echo "=== LISTING ALL FILES IN BUILD DIRECTORY ==="
+          find build -type f -exec ls -lh {} + | head -n 50
+
+      - name: Compress .app Bundle into app.zip with Dereferenced Links
         run: |
           cd build/Build/Products/Debug-iphonesimulator
           cp -R -L TPMSinoiOS.app "$GITHUB_WORKSPACE/TPMSinoiOS.app"

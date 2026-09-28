@@ -32,7 +32,6 @@
 		1016 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TPMSinoiOS/Views/SettingsView.swift; sourceTree = SOURCE_ROOT; };
 		1018 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TPMSinoiOS/Views/AnalyticsView.swift; sourceTree = SOURCE_ROOT; };
 		1020 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TPMSinoiOS/Views/MainTabView.swift; sourceTree = SOURCE_ROOT; };
-		1021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = TPMSinoiOS/Info.plist; sourceTree = SOURCE_ROOT; };
 		1023 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TPMSinoiOS/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -60,7 +59,6 @@
 				1016 /* SettingsView.swift */,
 				1018 /* AnalyticsView.swift */,
 				1020 /* MainTabView.swift */,
-				1021 /* Info.plist */,
 				1023 /* Assets.xcassets */,
 				3003 /* Products */,
 			);
@@ -174,8 +172,11 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = TPMSinoiOS/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "TPMSino requires Bluetooth access to connect to your TPMS Dispatcher and display live tire telemetry.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "TPMSino requires Bluetooth access to communicate with TPMS tire sensors.";
+				INFOPLIST_KEY_UIBackgroundModes = "bluetooth-central";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -205,8 +206,11 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = TPMSinoiOS/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "TPMSino requires Bluetooth access to connect to your TPMS Dispatcher and display live tire telemetry.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "TPMSino requires Bluetooth access to communicate with TPMS tire sensors.";
+				INFOPLIST_KEY_UIBackgroundModes = "bluetooth-central";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

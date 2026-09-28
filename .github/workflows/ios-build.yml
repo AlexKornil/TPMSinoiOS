@@ -36,26 +36,23 @@ jobs:
             ONLY_ACTIVE_ARCH=NO \
             clean build 2>&1 | tee build_output.log
 
-      - name: Locate All Compiled Binaries & App Bundles
+      - name: Resolve Real App Target Path and Compress app.zip
         run: |
-          echo "=== SEARCHING FOR ALL BINARIES & FILES > 100KB IN BUILD DIR ==="
-          find build -type f -size +100k -exec ls -lh {} + || true
-          echo "=== SEARCHING FOR EXECUTABLE BINARY NAMED TPMSinoiOS ==="
-          find build -name "TPMSinoiOS" -exec ls -lh {} + || true
-          echo "=== SEARCHING FOR ALL .app DIRECTORIES ==="
-          find build -name "*.app" -exec ls -ld {} + || true
+          TARGET=$(readlink -f build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app || readlink build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app || echo "build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app")
+          echo "Resolved Real App Target Path: $TARGET"
+          
+          if [ -d "$TARGET" ]; then
+            cd "$(dirname "$TARGET")"
+            APP_NAME=$(basename "$TARGET")
+            echo "=== REAL APP FOLDER CONTENTS ==="
+            ls -la "$APP_NAME/"
+            du -sh "$APP_NAME/"
+            zip -r "$GITHUB_WORKSPACE/app.zip" "$APP_NAME"
+          else
+            cd build/Build/Products/Debug-iphonesimulator
+            zip -r "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
+          fi
 
-      - name: Compress .app Bundle into app.zip
-        run: |
-          APP_PATH=$(find build -name "TPMSinoiOS.app" -type d | head -n 1)
-          echo "Found app bundle at: $APP_PATH"
-          mkdir -p "$GITHUB_WORKSPACE/real_app"
-          cp -R -L "$APP_PATH" "$GITHUB_WORKSPACE/real_app/"
-          cd "$GITHUB_WORKSPACE/real_app"
-          echo "=== CONTENTS OF COPIED APP BUNDLE ==="
-          ls -la TPMSinoiOS.app/
-          du -sh TPMSinoiOS.app/
-          zip -r -9 "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
           cd "$GITHUB_WORKSPACE"
           echo "=== FINAL APP.ZIP FILE SIZE ==="
           ls -lh app.zip

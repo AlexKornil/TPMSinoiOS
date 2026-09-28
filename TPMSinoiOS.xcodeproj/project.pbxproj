@@ -17,6 +17,7 @@
 		1015 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1016 /* SettingsView.swift */; };
 		1017 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1018 /* AnalyticsView.swift */; };
 		1019 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1020 /* MainTabView.swift */; };
+		1022 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1023 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		1018 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AnalyticsView.swift; sourceTree = "<group>"; };
 		1020 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/MainTabView.swift; sourceTree = "<group>"; };
 		1021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1023 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				1018 /* AnalyticsView.swift */,
 				1020 /* MainTabView.swift */,
 				1021 /* Info.plist */,
+				1023 /* Assets.xcassets */,
 			);
 			path = TPMSinoiOS;
 			sourceTree = "<group>";
@@ -88,6 +91,7 @@
 			buildPhases = (
 				6001 /* Sources */,
 				2001 /* Frameworks */,
+				9001 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -130,6 +134,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1022 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6001 /* Sources */ = {

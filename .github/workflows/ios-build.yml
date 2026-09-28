@@ -36,16 +36,21 @@ jobs:
             ONLY_ACTIVE_ARCH=NO \
             clean build 2>&1 | tee build_output.log
 
-      - name: Inspect Compiled App Directory Contents
+      - name: Locate and Copy Real Compiled .app Bundle
         run: |
-          echo "=== INSPECTING COMPILED APP DIRECTORY CONTENTS ==="
-          ls -la build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/
-          du -sh build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/
+          APP_PATH=$(find build -name "TPMSinoiOS.app" -type d | head -n 1)
+          echo "Found compiled app bundle at: $APP_PATH"
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: Could not locate TPMSinoiOS.app directory!"
+            exit 1
+          fi
+          cp -R -L "$APP_PATH" "$GITHUB_WORKSPACE/TPMSinoiOS.app"
+          echo "=== CHECKING REAL APP BUNDLE CONTENTS & FILE SIZE ==="
+          ls -la "$GITHUB_WORKSPACE/TPMSinoiOS.app/"
+          du -sh "$GITHUB_WORKSPACE/TPMSinoiOS.app/"
 
-      - name: Compress .app Bundle into app.zip with Dereferenced Links
+      - name: Compress .app Bundle into app.zip
         run: |
-          cd build/Build/Products/Debug-iphonesimulator
-          cp -R -L TPMSinoiOS.app "$GITHUB_WORKSPACE/TPMSinoiOS.app"
           cd "$GITHUB_WORKSPACE"
           zip -r -9 app.zip TPMSinoiOS.app
           echo "=== CHECKING FINAL APP.ZIP FILE SIZE ==="

@@ -23,15 +23,15 @@
 /* Begin PBXFileReference section */
 		1000 /* TPMSinoiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TPMSinoiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1002 /* TPMSinoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TPMSinoApp.swift; sourceTree = "<group>"; };
-		1004 /* TpmsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/TpmsData.swift; sourceTree = "<group>"; };
-		1006 /* BleConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLE/BleConstants.swift; sourceTree = "<group>"; };
-		1008 /* BleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLE/BleManager.swift; sourceTree = "<group>"; };
-		1010 /* TpmsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/TpmsViewModel.swift; sourceTree = "<group>"; };
-		1012 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DashboardView.swift; sourceTree = "<group>"; };
-		1014 /* SensorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SensorView.swift; sourceTree = "<group>"; };
-		1016 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SettingsView.swift; sourceTree = "<group>"; };
-		1018 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AnalyticsView.swift; sourceTree = "<group>"; };
-		1020 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/MainTabView.swift; sourceTree = "<group>"; };
+		1004 /* TpmsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TpmsData.swift; sourceTree = "<group>"; };
+		1006 /* BleConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleConstants.swift; sourceTree = "<group>"; };
+		1008 /* BleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BleManager.swift; sourceTree = "<group>"; };
+		1010 /* TpmsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TpmsViewModel.swift; sourceTree = "<group>"; };
+		1012 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		1014 /* SensorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorView.swift; sourceTree = "<group>"; };
+		1016 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1018 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		1020 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		1021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1023 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -59,19 +59,51 @@
 			isa = PBXGroup;
 			children = (
 				1002 /* TPMSinoApp.swift */,
+				3004 /* Models */,
+				3005 /* BLE */,
+				3006 /* ViewModels */,
+				3007 /* Views */,
+				1021 /* Info.plist */,
+				1023 /* Assets.xcassets */,
+			);
+			path = TPMSinoiOS;
+			sourceTree = "<group>";
+		};
+		3004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
 				1004 /* TpmsData.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		3005 /* BLE */ = {
+			isa = PBXGroup;
+			children = (
 				1006 /* BleConstants.swift */,
 				1008 /* BleManager.swift */,
+			);
+			path = BLE;
+			sourceTree = "<group>";
+		};
+		3006 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
 				1010 /* TpmsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3007 /* Views */ = {
+			isa = PBXGroup;
+			children = (
 				1012 /* DashboardView.swift */,
 				1014 /* SensorView.swift */,
 				1016 /* SettingsView.swift */,
 				1018 /* AnalyticsView.swift */,
 				1020 /* MainTabView.swift */,
-				1021 /* Info.plist */,
-				1023 /* Assets.xcassets */,
 			);
-			path = TPMSinoiOS;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		3003 /* Products */ = {
@@ -195,6 +227,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.tpmsinoios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -219,6 +252,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_BITCODE = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TPMSinoiOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -230,6 +264,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.tpmsinoios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;

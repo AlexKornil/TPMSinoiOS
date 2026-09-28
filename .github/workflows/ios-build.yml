@@ -18,19 +18,19 @@ jobs:
       - name: Select Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode.app
 
-      - name: List Available Xcode Destinations
-        run: xcodebuild -project TPMSinoiOS.xcodeproj -scheme TPMSinoiOS -showdestinations
-
       - name: Build iOS App with Xcode
         run: |
+          SIM_ID=$(xcrun simctl list devices available | grep -m1 "iPhone" | awk -F '[()]' '{print $(NF-1)}')
+          echo "Selected Available iOS Simulator ID: $SIM_ID"
           xcodebuild \
             -project TPMSinoiOS.xcodeproj \
             -scheme TPMSinoiOS \
             -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "id=$SIM_ID" \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
             clean build
 
       - name: Compress Compiled App Artifact

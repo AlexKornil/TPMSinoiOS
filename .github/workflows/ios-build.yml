@@ -31,21 +31,17 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build 2>&1 | tee build_output.log
 
-      - name: Create Physical Payload Directory & Zip App Bundle
+      - name: Verify Compiled App Files and Executable
         run: |
-          mkdir -p Payload
-          cp -R -L build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app Payload/
-          echo "--- Checking Payload Contents & File Sizes ---"
-          ls -la Payload/TPMSinoiOS.app/
-          du -sh Payload/TPMSinoiOS.app
-          zip -r -9 TPMSinoiOS-Payload.zip Payload/
-          ls -lh TPMSinoiOS-Payload.zip
+          echo "--- Checking Compiled App Directory ---"
+          ls -la build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/
+          du -sh build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/
 
-      - name: Upload iOS App Payload Artifact
+      - name: Upload iOS App Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TPMSinoiOS-App-Payload
-          path: TPMSinoiOS-Payload.zip
+          name: TPMSinoiOS-App
+          path: build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app/**
           retention-days: 30

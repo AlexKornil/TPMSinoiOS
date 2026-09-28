@@ -38,13 +38,13 @@ jobs:
 
       - name: Resolve Real App Target Path and Compress app.zip
         run: |
-          TARGET=$(readlink -f build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app || readlink build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app || echo "build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app")
+          TARGET=$(python3 -c "import os; print(os.path.realpath('build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app'))")
           echo "Resolved Real App Target Path: $TARGET"
           
           if [ -d "$TARGET" ]; then
             cd "$(dirname "$TARGET")"
             APP_NAME=$(basename "$TARGET")
-            echo "=== REAL APP FOLDER CONTENTS ==="
+            echo "=== REAL APP FOLDER CONTENTS & FILE SIZE ==="
             ls -la "$APP_NAME/"
             du -sh "$APP_NAME/"
             zip -r "$GITHUB_WORKSPACE/app.zip" "$APP_NAME"

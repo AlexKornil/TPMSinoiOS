@@ -31,7 +31,12 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build 2>&1 | tee build_output.log
+
+      - name: Print Build Log Errors on Failure
+        if: failure()
+        run: |
+          grep -i -C 5 "error:" build_output.log || tail -n 100 build_output.log
 
       - name: Compress Compiled App Artifact
         run: |

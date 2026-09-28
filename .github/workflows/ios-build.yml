@@ -26,7 +26,6 @@ jobs:
             -project TPMSinoiOS.xcodeproj \
             -scheme TPMSinoiOS \
             -configuration Debug \
-            -sdk iphonesimulator \
             -destination "id=$SIM_ID" \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \

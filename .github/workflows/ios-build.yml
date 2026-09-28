@@ -26,39 +26,29 @@ jobs:
             -project TPMSinoiOS.xcodeproj \
             -scheme TPMSinoiOS \
             -configuration Debug \
+            -sdk iphonesimulator \
             -destination "id=$SIM_ID" \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build 2>&1 | tee build_output.log
+            clean build
 
-      - name: Compress .app Bundle into app.zip and app.tar.gz
+      - name: Compress .app Bundle into app.zip with Dereferenced Links
         run: |
           cd build/Build/Products/Debug-iphonesimulator
           echo "=== CHECKING CONTENTS OF TPMSinoiOS.app ==="
           ls -la TPMSinoiOS.app
           du -sh TPMSinoiOS.app
-          
-          # Create app.zip containing TPMSinoiOS.app
-          zip -r "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
-          
-          # Create app.tar.gz containing TPMSinoiOS.app
-          tar -czf "$GITHUB_WORKSPACE/app.tar.gz" TPMSinoiOS.app
-          
+          zip -r -L "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
           cd "$GITHUB_WORKSPACE"
-          ls -lh app.zip app.tar.gz
+          echo "=== FINAL APP.ZIP FILE SIZE ==="
+          ls -lh app.zip
+          du -sh app.zip
 
-      - name: Upload app.zip Artifact for Appetize.io
+      - name: Upload app.zip Artifact for Appetize.io & Sideloadly
         uses: actions/upload-artifact@v4
         with:
           name: app-zip
           path: app.zip
-          retention-days: 30
-
-      - name: Upload app.tar.gz Artifact for Appetize.io
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-tar-gz
-          path: app.tar.gz
           retention-days: 30

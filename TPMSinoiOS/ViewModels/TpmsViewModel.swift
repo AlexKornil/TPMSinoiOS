@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import AVFoundation
+import AudioToolbox
 
 public class TpmsViewModel: ObservableObject {
     @Published public var connectionState: BleConnectionState = .idle

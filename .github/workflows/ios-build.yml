@@ -31,22 +31,21 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build 2>&1 | tee build_output.log
 
-      - name: Inspect and Print All Built Products
-        run: |
-          echo "=== PRINTING ALL BUILT FILES IN BUILD PRODUCTS ==="
-          find build/Build/Products/ -maxdepth 5 -ls || true
-
-      - name: Package Full Build Products Directory
+      - name: Compress dereferenced app bundle into app.zip
         run: |
           cd build/Build/Products/Debug-iphonesimulator
-          zip -r "$GITHUB_WORKSPACE/TPMSinoiOS-Products.zip" .
-          ls -lh "$GITHUB_WORKSPACE/TPMSinoiOS-Products.zip"
+          cp -R -L TPMSinoiOS.app "$GITHUB_WORKSPACE/TPMSinoiOS.app"
+          cd "$GITHUB_WORKSPACE"
+          zip -r -9 app.zip TPMSinoiOS.app
+          echo "=== CHECKING FINAL APP.ZIP FILE SIZE ==="
+          ls -lh app.zip
+          du -sh app.zip
 
-      - name: Upload iOS App Artifact
+      - name: Upload app.zip Artifact for Appetize.io & Sideloadly
         uses: actions/upload-artifact@v4
         with:
-          name: TPMSinoiOS-Products-App
-          path: TPMSinoiOS-Products.zip
+          name: app-zip
+          path: app.zip
           retention-days: 30

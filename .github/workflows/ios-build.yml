@@ -35,23 +35,24 @@ jobs:
             ONLY_ACTIVE_ARCH=NO \
             clean build 2>&1 | tee build_output.log
 
-      - name: Locate Real App Bundle Inside DerivedData and Package app.zip
+      - name: Inspect Executable Binary Details
         run: |
-          REAL_APP_DIR=$(find /Users/runner/Library/Developer/Xcode/DerivedData build -name "TPMSinoiOS.app" -type d 2>/dev/null | head -n 1)
-          echo "Found Real App Directory: $REAL_APP_DIR"
+          REAL_APP=$(python3 -c "import os; print(os.path.realpath('build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app'))")
+          echo "Resolved Real App Path: $REAL_APP"
+          mkdir -p "$GITHUB_WORKSPACE/real_app"
+          cp -R -L "$REAL_APP" "$GITHUB_WORKSPACE/real_app/"
           
-          mkdir -p "$GITHUB_WORKSPACE/dist/TPMSinoiOS.app"
-          cp -R -L "$REAL_APP_DIR/." "$GITHUB_WORKSPACE/dist/TPMSinoiOS.app/"
-          
-          echo "=== CHECKING PHYSICAL DIST CONTENTS & SIZES ==="
-          ls -la "$GITHUB_WORKSPACE/dist/TPMSinoiOS.app/"
-          du -sh "$GITHUB_WORKSPACE/dist/TPMSinoiOS.app/"
-          
-          cd "$GITHUB_WORKSPACE/dist"
+          echo "=== APP BUNDLE CONTENTS & FILE SIZES ==="
+          ls -la "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/"
+          du -sh "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/"
+          file "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/TPMSinoiOS" || true
+
+      - name: Compress Real Compiled App Bundle into app.zip
+        run: |
+          cd "$GITHUB_WORKSPACE/real_app"
           zip -r -9 "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
-          
           cd "$GITHUB_WORKSPACE"
-          echo "=== CHECKING FINAL APP.ZIP FILE SIZE ==="
+          echo "=== FINAL APP.ZIP FILE SIZE ==="
           ls -lh app.zip
           du -sh app.zip
 

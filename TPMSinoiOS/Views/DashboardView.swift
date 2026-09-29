@@ -144,8 +144,7 @@ struct EngineeringDashboardView: View {
                 Text("RSSI").frame(maxWidth: .infinity)
                 Text("Sensor ID").frame(maxWidth: .infinity)
             }
-            .font(.caption)
-            .bold()
+            .font(.caption.bold())
             .padding(.vertical, 8)
             .background(Color.blue.opacity(0.2))
             .cornerRadius(8)

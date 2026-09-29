@@ -32,32 +32,34 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
+            ONLY_ACTIVE_ARCH=NO \
             clean build 2>&1 | tee build_output.log
 
-      - name: Locate All Compiled TPMSinoiOS Files Across Entire Mac
-        run: |
-          echo "=== SEARCHING ENTIRE MAC FOR TPMSinoiOS ==="
-          find /Users/runner -name "TPMSinoiOS*" -exec ls -lh {} + 2>/dev/null || true
-
-      - name: Compress Real Compiled App Bundle into app.zip
+      - name: Inspect and Print Executable Binary Details
         run: |
           REAL_APP_DIR=$(find /Users/runner -name "TPMSinoiOS.app" -type d 2>/dev/null | grep -v "DerivedData" | head -n 1)
           if [ -z "$REAL_APP_DIR" ]; then
             REAL_APP_DIR=$(find /Users/runner -name "TPMSinoiOS.app" -type d 2>/dev/null | head -n 1)
           fi
           echo "Real App Dir: $REAL_APP_DIR"
-          
           mkdir -p "$GITHUB_WORKSPACE/real_app"
           cp -R -L "$REAL_APP_DIR" "$GITHUB_WORKSPACE/real_app/"
+          
+          echo "=== APP BUNDLE DIRECTORY CONTENTS ==="
+          ls -la "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/"
+          
+          echo "=== EXECUTABLE BINARY FILE TYPE & SIZE ==="
+          file "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/TPMSinoiOS" || true
+          ls -lh "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/TPMSinoiOS" || true
+
+      - name: Compress Real Compiled App Bundle into app.zip
+        run: |
           cd "$GITHUB_WORKSPACE/real_app"
-          echo "=== REAL APP CONTENTS & SIZE ==="
-          ls -la TPMSinoiOS.app/
-          du -sh TPMSinoiOS.app/
           zip -r -9 "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
           cd "$GITHUB_WORKSPACE"
-          echo "=== FINAL APP.ZIP FILE SIZE ==="
+          echo "=== FINAL APP.ZIP FILE SIZE & CONTENTS ==="
           ls -lh app.zip
-          du -sh app.zip
+          unzip -l app.zip
 
       - name: Upload app.zip Artifact for Appetize.io & Sideloadly
         uses: actions/upload-artifact@v4

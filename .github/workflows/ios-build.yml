@@ -18,17 +18,29 @@ jobs:
       - name: Select Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode.app
 
-      - name: Compile Swift App Binary with Swift Package Manager
+      - name: Generate Official Xcode Project from Swift Package
         run: |
-          swift build -c release --triple arm64-apple-ios15.0-simulator
+          swift package generate-xcodeproj --output TPMSinoiOS.xcodeproj
+
+      - name: Build iOS App with Xcode
+        run: |
+          xcodebuild \
+            -project TPMSinoiOS.xcodeproj \
+            -scheme TPMSinoiOS-Package \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            clean build
 
       - name: Create Real iOS .app Bundle Package
         run: |
-          mkdir -p dist/TPMSinoiOS.app
-          BINARY_PATH=$(find .build -name "TPMSinoiOS" -type f | grep -v "\.d" | head -n 1)
-          echo "Found compiled Swift binary at: $BINARY_PATH"
-          cp "$BINARY_PATH" dist/TPMSinoiOS.app/
-          cp TPMSinoiOS/Info.plist dist/TPMSinoiOS.app/
+          mkdir -p dist
+          APP_PATH=$(find build -name "TPMSinoiOS.app" -type d | head -n 1)
+          echo "Found compiled app bundle at: $APP_PATH"
+          cp -R -L "$APP_PATH" dist/
           
           echo "=== CHECKING REAL APP BUNDLE CONTENTS & FILE SIZE ==="
           ls -lh dist/TPMSinoiOS.app/

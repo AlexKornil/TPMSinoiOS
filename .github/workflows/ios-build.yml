@@ -34,7 +34,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             clean build 2>&1 | tee build_output.log
 
-      - name: Resolve Real App Target Path and Compress app.zip
+      - name: Inspect and Package Real App Bundle
         run: |
           REAL_APP=$(python3 -c "import os; print(os.path.realpath('build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app'))")
           echo "Resolved Real App Path: $REAL_APP"
@@ -42,8 +42,8 @@ jobs:
           if [ -d "$REAL_APP" ]; then
             cd "$(dirname "$REAL_APP")"
             APP_NAME=$(basename "$REAL_APP")
-            echo "=== REAL APP CONTENTS & SIZE ==="
-            ls -la "$APP_NAME/"
+            echo "=== REAL APP CONTENTS & SIZES ==="
+            ls -lh "$APP_NAME/"
             du -sh "$APP_NAME/"
             zip -r "$GITHUB_WORKSPACE/app.zip" "$APP_NAME"
           else

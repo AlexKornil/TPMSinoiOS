@@ -32,25 +32,28 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build 2>&1 | tee build_output.log
+            clean build
 
-      - name: Inspect and Package Real App Bundle
+      - name: Locate All Compiled TPMSinoiOS Files Across Entire Mac
         run: |
-          REAL_APP=$(python3 -c "import os; print(os.path.realpath('build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app'))")
-          echo "Resolved Real App Path: $REAL_APP"
-          
-          if [ -d "$REAL_APP" ]; then
-            cd "$(dirname "$REAL_APP")"
-            APP_NAME=$(basename "$REAL_APP")
-            echo "=== REAL APP CONTENTS & SIZES ==="
-            ls -lh "$APP_NAME/"
-            du -sh "$APP_NAME/"
-            zip -r "$GITHUB_WORKSPACE/app.zip" "$APP_NAME"
-          else
-            echo "Error: Real app directory not found!"
-            exit 1
-          fi
+          echo "=== SEARCHING ENTIRE MAC FOR TPMSinoiOS ==="
+          find /Users/runner -name "TPMSinoiOS*" -exec ls -lh {} + 2>/dev/null || true
 
+      - name: Compress Real Compiled App Bundle into app.zip
+        run: |
+          REAL_APP_DIR=$(find /Users/runner -name "TPMSinoiOS.app" -type d 2>/dev/null | grep -v "DerivedData" | head -n 1)
+          if [ -z "$REAL_APP_DIR" ]; then
+            REAL_APP_DIR=$(find /Users/runner -name "TPMSinoiOS.app" -type d 2>/dev/null | head -n 1)
+          fi
+          echo "Real App Dir: $REAL_APP_DIR"
+          
+          mkdir -p "$GITHUB_WORKSPACE/real_app"
+          cp -R -L "$REAL_APP_DIR" "$GITHUB_WORKSPACE/real_app/"
+          cd "$GITHUB_WORKSPACE/real_app"
+          echo "=== REAL APP CONTENTS & SIZE ==="
+          ls -la TPMSinoiOS.app/
+          du -sh TPMSinoiOS.app/
+          zip -r -9 "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
           cd "$GITHUB_WORKSPACE"
           echo "=== FINAL APP.ZIP FILE SIZE ==="
           ls -lh app.zip

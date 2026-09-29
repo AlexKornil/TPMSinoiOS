@@ -18,21 +18,21 @@ jobs:
       - name: Select Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode.app
 
-      - name: Generate Official Xcode Project from Swift Package
-        run: |
-          swift package generate-xcodeproj --output TPMSinoiOS.xcodeproj
-
       - name: Build iOS App with Xcode
         run: |
+          SIM_ID=$(xcrun simctl list devices available | grep -i "iPhone" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' | head -n 1)
+          echo "Selected Available iOS Simulator ID: $SIM_ID"
           xcodebuild \
             -project TPMSinoiOS.xcodeproj \
-            -scheme TPMSinoiOS-Package \
+            -scheme TPMSinoiOS \
             -configuration Release \
             -sdk iphonesimulator \
+            -destination "id=$SIM_ID" \
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
+            ONLY_ACTIVE_ARCH=NO \
             clean build
 
       - name: Create Real iOS .app Bundle Package
@@ -47,16 +47,16 @@ jobs:
           du -sh dist/TPMSinoiOS.app/
           
           cd dist
-          zip -r -9 "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
+          zip -r -9 "$GITHUB_WORKSPACE/TPMSinoiOS.app.zip" TPMSinoiOS.app
           cd "$GITHUB_WORKSPACE"
           
           echo "=== FINAL APP.ZIP FILE SIZE ==="
-          ls -lh app.zip
-          du -sh app.zip
+          ls -lh TPMSinoiOS.app.zip
+          du -sh TPMSinoiOS.app.zip
 
-      - name: Upload app.zip Artifact for Appetize.io & Sideloadly
+      - name: Upload TPMSinoiOS.app.zip Artifact for Appetize.io & Sideloadly
         uses: actions/upload-artifact@v4
         with:
-          name: app-zip
-          path: app.zip
+          name: TPMSinoiOS-App-Zip
+          path: TPMSinoiOS.app.zip
           retention-days: 30

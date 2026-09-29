@@ -26,7 +26,6 @@ jobs:
 
       - name: Build iOS App with Xcode
         run: |
-          set -e -o pipefail
           SIM_ID=$(xcrun simctl list devices available | grep -i "iPhone" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' | head -n 1)
           echo "Selected Available iOS Simulator ID: $SIM_ID"
           xcodebuild \
@@ -39,7 +38,15 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build
+            clean build > build_output.log 2>&1 || {
+              echo "xcodebuild failed"
+              git config --global user.name "GitHub Actions"
+              git config --global user.email "actions@github.com"
+              git add build_output.log
+              git commit -m "Upload build log [skip ci]"
+              git push
+              exit 1
+            }
 
       - name: Inspect and Package Real App Bundle
         run: |

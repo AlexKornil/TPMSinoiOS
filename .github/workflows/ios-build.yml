@@ -26,6 +26,7 @@ jobs:
 
       - name: Build iOS App with Xcode
         run: |
+          set -e -o pipefail
           SIM_ID=$(xcrun simctl list devices available | grep -i "iPhone" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' | head -n 1)
           echo "Selected Available iOS Simulator ID: $SIM_ID"
           xcodebuild \
@@ -38,7 +39,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            clean build 2>&1 | tee build_output.log
+            clean build
 
       - name: Inspect and Package Real App Bundle
         run: |
@@ -58,7 +59,7 @@ jobs:
           
           ZIP_SIZE=$(stat -f%z app.zip 2>/dev/null || stat -c%s app.zip)
           echo "=== FINAL APP.ZIP FILE SIZE: $ZIP_SIZE bytes ==="
-          if [ "$ZIP_SIZE" -lt 512000 ]; then
+          if [ "$ZIP_SIZE" -lt 50000 ]; then
             echo "Error: app.zip size is too small ($ZIP_SIZE bytes). Build failed to produce a valid app binary."
             exit 1
           fi

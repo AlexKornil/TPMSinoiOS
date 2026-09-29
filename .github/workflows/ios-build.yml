@@ -20,7 +20,6 @@ jobs:
 
       - name: Build iOS App with Xcode
         run: |
-          set -o pipefail
           SIM_ID=$(xcrun simctl list devices available | grep -i "iPhone" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}' | head -n 1)
           echo "Selected Available iOS Simulator ID: $SIM_ID"
           xcodebuild \
@@ -34,23 +33,19 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             ONLY_ACTIVE_ARCH=NO \
-            clean build 2>&1 | tee build_output.log
+            build
 
       - name: Inspect and Package Real App Bundle
         run: |
           REAL_APP=$(python3 -c "import os; print(os.path.realpath('build/Build/Products/Debug-iphonesimulator/TPMSinoiOS.app'))")
           echo "Resolved Real App Path: $REAL_APP"
-          mkdir -p "$GITHUB_WORKSPACE/real_app"
-          cp -R -L "$REAL_APP" "$GITHUB_WORKSPACE/real_app/"
           
-          echo "=== CHECKING REAL COPIED APP CONTENTS & FILE SIZES ==="
-          ls -la "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/"
-          du -sh "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/"
-          file "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/TPMSinoiOS" || true
-
-      - name: Compress Real App Bundle into app.zip
-        run: |
-          cd "$GITHUB_WORKSPACE/real_app"
+          cd build/Build/Products/Debug-iphonesimulator
+          echo "=== APP BUNDLE CONTENTS & FILE SIZES ==="
+          ls -la TPMSinoiOS.app/
+          du -sh TPMSinoiOS.app/
+          file TPMSinoiOS.app/TPMSinoiOS || true
+          
           zip -r -9 "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
           cd "$GITHUB_WORKSPACE"
           echo "=== FINAL APP.ZIP FILE SIZE ==="
@@ -60,6 +55,6 @@ jobs:
       - name: Upload app.zip Artifact for Appetize.io & Sideloadly
         uses: actions/upload-artifact@v4
         with:
-          name: TPMSinoiOS-Installer
+          name: app-zip
           path: app.zip
           retention-days: 30

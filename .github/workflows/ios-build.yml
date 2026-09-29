@@ -35,29 +35,23 @@ jobs:
             ONLY_ACTIVE_ARCH=NO \
             clean build 2>&1 | tee build_output.log
 
-      - name: Inspect and Print Executable Binary Details
+      - name: Locate Real App Bundle Inside DerivedData and Package app.zip
         run: |
-          REAL_APP_DIR=$(find /Users/runner -name "TPMSinoiOS.app" -type d 2>/dev/null | grep -v "DerivedData" | head -n 1)
-          if [ -z "$REAL_APP_DIR" ]; then
-            REAL_APP_DIR=$(find /Users/runner -name "TPMSinoiOS.app" -type d 2>/dev/null | head -n 1)
-          fi
-          echo "Real App Dir: $REAL_APP_DIR"
-          mkdir -p "$GITHUB_WORKSPACE/real_app"
-          cp -R -L "$REAL_APP_DIR" "$GITHUB_WORKSPACE/real_app/"
+          REAL_APP_DIR=$(find /Users/runner/Library/Developer/Xcode/DerivedData build -name "TPMSinoiOS.app" -type d 2>/dev/null | head -n 1)
+          echo "Found Real App Directory: $REAL_APP_DIR"
           
-          echo "=== APP BUNDLE DIRECTORY CONTENTS ==="
-          ls -la "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/"
+          mkdir -p "$GITHUB_WORKSPACE/dist/TPMSinoiOS.app"
+          cp -R -L "$REAL_APP_DIR/." "$GITHUB_WORKSPACE/dist/TPMSinoiOS.app/"
           
-          echo "=== EXECUTABLE BINARY FILE TYPE & SIZE ==="
-          file "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/TPMSinoiOS" || true
-          ls -lh "$GITHUB_WORKSPACE/real_app/TPMSinoiOS.app/TPMSinoiOS" || true
-
-      - name: Compress Real Compiled App Bundle into app.zip
-        run: |
-          cd "$GITHUB_WORKSPACE/real_app"
+          echo "=== CHECKING PHYSICAL DIST CONTENTS & SIZES ==="
+          ls -la "$GITHUB_WORKSPACE/dist/TPMSinoiOS.app/"
+          du -sh "$GITHUB_WORKSPACE/dist/TPMSinoiOS.app/"
+          
+          cd "$GITHUB_WORKSPACE/dist"
           zip -r -9 "$GITHUB_WORKSPACE/app.zip" TPMSinoiOS.app
+          
           cd "$GITHUB_WORKSPACE"
-          echo "=== FINAL APP.ZIP FILE SIZE ==="
+          echo "=== CHECKING FINAL APP.ZIP FILE SIZE ==="
           ls -lh app.zip
           du -sh app.zip
 

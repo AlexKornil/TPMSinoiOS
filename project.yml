@@ -10,16 +10,13 @@ targets:
     deploymentTarget: "15.0"
     sources:
       - path: TPMSinoiOS
-        exclude:
-          - Info.plist
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.tpmsinoios
-        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: TPMSinoiOS/Info.plist
         INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription: "TPMSino requires Bluetooth access to connect to your TPMS Dispatcher and display live tire telemetry."
         INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription: "TPMSino requires Bluetooth access to communicate with TPMS tire sensors."
         INFOPLIST_KEY_UIBackgroundModes: "bluetooth-central"
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         CODE_SIGNING_ALLOWED: NO
         CODE_SIGNING_REQUIRED: NO
         CODE_SIGN_IDENTITY: ""

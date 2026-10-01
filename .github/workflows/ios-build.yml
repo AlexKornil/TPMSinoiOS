@@ -44,7 +44,13 @@ jobs:
       - name: Package Release IPA for Sideloadly
         run: |
           mkdir -p Payload
-          cp -R build/Build/Products/Release-iphoneos/*.app Payload/
+          APP_PATH=$(find build -type d -name "*.app" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: No .app bundle found in build directory!"
+            exit 1
+          fi
+          echo "Found app bundle at: $APP_PATH"
+          cp -R "$APP_PATH" Payload/
           zip -r -9 TPMSinoiOS-Release.ipa Payload
           
           IPA_SIZE=$(stat -f%z TPMSinoiOS-Release.ipa 2>/devnull || stat -c%s TPMSinoiOS-Release.ipa)
